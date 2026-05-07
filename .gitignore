@@ -1,0 +1,11 @@
+# Lion-Eye OSINT Engine
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+lion_eye_activity.txt
+captured_media/*.png
+captured_media/*.jpg
+*.pcap
+.DS_Store

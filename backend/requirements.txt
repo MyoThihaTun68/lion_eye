@@ -1,0 +1,7 @@
+scapy
+psutil
+tabulate
+colorama
+netifaces
+NetfilterQueue
+cryptography
