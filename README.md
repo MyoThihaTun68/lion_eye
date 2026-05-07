@@ -146,17 +146,7 @@ sudo ./lion scan --kick
 
 For advanced users who already have Target and Gateway IPs:
 
-```bash
-
 sudo ./lion arp -t 192.168.1.5 -g 192.168.1.1 --ghost
-
-```<img width="846" height="448" alt="LIONEYESCANBOARD" src="https://github.com/user-attachments/assets/abfab33f-85f5-45c4-88f2-cd72695ef5c6" />
-
-
-
-
-
----
 
 
 
