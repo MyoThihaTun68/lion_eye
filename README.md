@@ -4,7 +4,7 @@
   <img src="https://github.com/user-attachments/assets/a6fb715e-9e31-4a91-b571-fef71e0bca01" width="850" alt="Lion-Eye Scanner">
 </p>
 
-**Lion-Eye** is a lightweight, CLI-based network OSINT and diagnostic tool built with Python and Scapy. It provides real-time visibility into local network traffic with a clean, interactive dashboard designed for speed and clarity.
+**Lion-Eye** is a lightweight, CLI-based network OSINT and diagnostic tool built with Python and Scapy. It provides real-time visibility into local network traffic via a sleek, interactive terminal dashboard engineered for performance and clarity.
 
 ---
 
@@ -18,27 +18,166 @@
 *   🚑 **Self-Healing**: Robust cleanup logic ensures the network is restored instantly upon exit (`CTRL+C`).
 
 ---
+## 🚀 Installation (Step-by-Step)
 
-## 🚀 Quick Start
 
-### 1. Requirements (Linux)
-Ensure you have Python 3.10+ and the necessary system headers installed:
+
+### 1. System Prerequisites
+
+Ensure you are running on a Linux-based system (Ubuntu/Debian/Kali recommended) with Python 3.10+.
+
+
+
 ```bash
-sudo apt-get update && sudo apt-get install -y python3-pip python3-venv libpcap-dev
-2. InstallationBash# Clone the project
-git clone [https://github.com/MyoThihaTun68/lion_eye.git](https://github.com/MyoThihaTun68/lion_eye.git)
-cd lion_eye
 
-# Setup environment
-python3 -m venv venv && source venv/bin/activate
+# Install system dependencies
+
+sudo apt-get update
+
+sudo apt-get install -y python3-pip python3-venv libpcap-dev libnetfilter-queue-dev
+
+```
+
+
+
+### 2. Project Setup
+
+```bash
+
+# Clone the repository
+
+git clone https://github.com/MyoThihaTun68/lion_eye.git
+
+cd lion_eye/backend
+
+
+
+# Create and activate virtual environment
+
+python3 -m venv venv
+
+source venv/bin/activate
+
+
+
+# Install Python requirements
+
 pip install -r requirements.txt
+
+```
+
+
+
+### 3. Permissions
+
+Lion-Eye requires raw socket access to perform ARP spoofing and packet sniffing.
+
+```bash
+
+# Make the main wrapper executable
+
 chmod +x lion
-🛠️ Usage Guide (Root Required)ActionCommandDisconnect All Devicessudo ./lion killerStealth Monitoringsudo ./lion scan --ghostFull Traffic Analysissudo ./lion scan --huntKick Specific Targetsudo ./lion scan --kickManual ARP Spoofsudo ./lion arp -t [IP] -g [GW] --ghost📸 Dashboard Preview📁 Output & LoggingActivity Log: Human-readable logs saved to lion_eye_activity.txt.Packet Export: Use the -o filename.pcap flag to save traffic for analysis in Wireshark.⚖️ Legal DisclaimerThis tool is for educational and authorized security testing purposes only. Unauthorized use on networks without explicit permission is illegal. Use responsibly.Developed by Myo Thiha Tun 🦁🔥
+
+```
+
+
+
 ---
 
-### Why this works:
-*   **Visual Hierarchy**: I used centered images to break up the text and make the "pro" dashboard shots stand out.
-*   **Scanability**: The command table makes it easy for users to know exactly what to type without reading paragraphs.
-*   **Professional Tone**: It sounds like a high-end security tool while staying "simple and clean."
 
-Go ahead and update your **README.md** with this code. Your GitHub profile is going to look amazing with this project on it!
+
+## 🛠️ Usage Guide
+
+
+
+Always run commands with **sudo** privileges.
+
+
+
+### 1. Network Storming (ARP Killer)
+
+Disconnect every device on the network except yourself:
+
+```bash
+
+sudo ./lion killer
+
+```
+
+
+
+### 2. High-Fidelity Intelligence (Ghost Mode)
+
+Scan, pick a target, and monitor their active sessions and app usage stealthily:
+
+```bash
+
+sudo ./lion scan --ghost
+
+```
+
+
+
+### 3. Full Traffic Analysis (Hunt Mode)
+
+The classic dashboard with live packet tables and traffic charts:
+
+```bash
+
+sudo ./lion scan --hunt
+
+```
+
+
+
+### 4. Direct Disconnect (Kick)
+
+Instantly drop the internet connection for a specific target:
+
+```bash
+
+sudo ./lion scan --kick
+
+```
+
+
+
+### 5. Manual ARP Spoofing
+
+For advanced users who already have Target and Gateway IPs:
+
+```bash
+
+sudo ./lion arp -t 192.168.1.5 -g 192.168.1.1 --ghost
+
+```<img width="846" height="448" alt="LIONEYESCANBOARD" src="https://github.com/user-attachments/assets/abfab33f-85f5-45c4-88f2-cd72695ef5c6" />
+
+
+
+
+
+---
+
+
+
+## 📁 Output & Logs
+
+*   **Intelligence Card**: Displays real-time app hits (e.g., 🔵 Facebook, 🔴 Google), encryption levels (TLS 1.3), and session token counts.
+
+*   **Activity Log**: `lion_eye_activity.txt` (Human-readable log of all connections).
+
+*   **Packet Dump**: Pass `-o capture.pcap` to any command to save data for Wireshark.
+
+
+
+---
+
+
+
+## ⚖️ Legal Disclaimer
+
+This tool is for **educational and authorized security testing purposes only**. Unauthorized use of this tool on networks you do not own or have explicit permission to test is illegal. The developers assume no liability for misuse of this software.
+
+
+
+---
