@@ -1,5 +1,9 @@
 # 🦁 Lion-Eye: High-Performance Network Intelligence Engine
 
+
+<img width="846" height="448" alt="LIONEYESCANBOARD" src="https://github.com/user-attachments/assets/a6fb715e-9e31-4a91-b571-fef71e0bca01" />
+
+
 **Lion-Eye** is a professional-grade, CLI-based network OSINT and diagnostic tool designed for deep packet analysis, network discovery, and intelligence gathering. Built with Python and Scapy, it provides real-time visibility into network traffic with a rich, interactive dashboard.
 
 ---
@@ -87,7 +91,8 @@ sudo ./lion scan --kick
 For advanced users who already have Target and Gateway IPs:
 ```bash
 sudo ./lion arp -t 192.168.1.5 -g 192.168.1.1 --ghost
-```
+```<img width="846" height="448" alt="LIONEYESCANBOARD" src="https://github.com/user-attachments/assets/abfab33f-85f5-45c4-88f2-cd72695ef5c6" />
+
 
 ---
 
