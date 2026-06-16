@@ -6,6 +6,8 @@ from core.network_scanner import NetworkScanner
 from core.arp_spoofer import ARPSpoofer
 from core.dns_interceptor import DNSInterceptor
 from core.bandwidth_monitor import BandwidthMonitor
+from core.dns_logger import DNSLogger
+from core.nicknames import NicknameManager
 from core.l7_parser import L7Analyzer
 from core.config import KNOWN_SERVICES
 from utils.helpers import (
@@ -83,6 +85,8 @@ def select_target(interface):
     while True:
         scanner = NetworkScanner(interface)
         clients = scanner.scan_network()
+        if clients:
+            clients = scanner.passive_fingerprint(clients)
         scanner.print_hosts(clients)
 
         if not clients:
@@ -184,6 +188,10 @@ def main():
     scanner_parser.add_argument(
         "--kick", action="store_true", help="Scan → Pick → Kick (Disconnect target)"
     )
+    scanner_parser.add_argument(
+        "--watch", metavar="SECONDS", type=int, nargs="?", const=60,
+        help="Auto-rescan every N seconds and show join/leave events (default: 60s)"
+    )
     scanner_parser.add_argument("-o", "--output", help="Save to PCAP")
     scanner_parser.add_argument("--message", help="Inject JS alert message (HTTP only)")
     scanner_parser.add_argument("--spoof", help="Redirect target to this URL (HTTP only)")
@@ -215,6 +223,41 @@ def main():
     l7_parser.add_argument("-c", "--count", type=int, default=200)
     l7_parser.add_argument("-f", "--filter", default="all")
 
+    # ── dnslog (Passive DNS Query Logger) ─────────────────
+    dnslog_parser = subparsers.add_parser(
+        "dnslog", help="Passive DNS Query Logger (read-only intelligence)"
+    )
+    dnslog_parser.add_argument(
+        "-i", "--interface", help="Network interface. Auto-detected if omitted."
+    )
+    dnslog_parser.add_argument(
+        "-o", "--output", default="dns_queries.log",
+        help="Output log file (default: dns_queries.log)"
+    )
+    dnslog_parser.add_argument(
+        "-t", "--target", metavar="IP",
+        help="Only log DNS queries from this specific IP address."
+    )
+
+    # ── nick (Device Nicknames) ────────────────────────────
+    nick_parser = subparsers.add_parser(
+        "nick", help="Manage device nicknames (label devices by MAC address)"
+    )
+    nick_sub = nick_parser.add_subparsers(dest="nick_action")
+
+    # nick list
+    nick_sub.add_parser("list", help="Show all saved nicknames")
+
+    # nick set <MAC> <Name> [Note]
+    nick_set = nick_sub.add_parser("set", help="Add or update a nickname")
+    nick_set.add_argument("mac", help="MAC address (e.g. 08:f8:bc:74:20:9c)")
+    nick_set.add_argument("name", help="Nickname to assign (e.g. \"Boss's MacBook\")")
+    nick_set.add_argument("note", nargs="?", default="", help="Optional note (e.g. dept, owner)")
+
+    # nick remove <MAC>
+    nick_rm = nick_sub.add_parser("remove", help="Remove a nickname")
+    nick_rm.add_argument("mac", help="MAC address to remove")
+
     # ── killer ────────────────────────────────────────────
     subparsers.add_parser("killer", help="ARP Killer (Kick ALL devices off network)")
 
@@ -229,7 +272,10 @@ def main():
         _resolve_interface(args)
 
         if args.command == "scan":
-            if args.hunt or getattr(args, 'ghost', False):
+            if getattr(args, 'watch', None) is not None:
+                scanner = NetworkScanner(args.interface)
+                scanner.watch_network(interval=args.watch)
+            elif args.hunt or getattr(args, 'ghost', False):
                 target = select_target(args.interface)
                 if target: launch_hunt(args.interface, target, args)
             elif args.kick:
@@ -241,6 +287,8 @@ def main():
             else:
                 scanner = NetworkScanner(args.interface)
                 clients = scanner.scan_network()
+                if clients:
+                    clients = scanner.passive_fingerprint(clients)
                 scanner.print_hosts(clients)
 
         elif args.command == "arp":
@@ -275,6 +323,26 @@ def main():
             BandwidthMonitor(args.interface).start()
         elif args.command == "l7":
             L7Analyzer(args.interface, count=args.count, filter_proto=args.filter).start()
+
+        elif args.command == "nick":
+            nm = NicknameManager()
+            action = getattr(args, 'nick_action', None)
+            if action == "list" or action is None:
+                nm.list_all()
+            elif action == "set":
+                nm.set(args.mac, args.name, getattr(args, 'note', ''))
+            elif action == "remove":
+                nm.remove(args.mac)
+            else:
+                print_warning("Unknown nick action. Use: list | set | remove")
+
+        elif args.command == "dnslog":
+            logger = DNSLogger(
+                args.interface,
+                output_file=args.output,
+                filter_ip=getattr(args, 'target', None)
+            )
+            logger.start()
 
         elif args.command == "killer":
             scanner = NetworkScanner(args.interface)
